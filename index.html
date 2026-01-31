@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منيو صبح ولفة</title>
+    <style>
+        :root { --brand-yellow: #f1b418; --brand-dark: #000; --card-bg: #141414; --text-main: #fff; --text-dim: #b0b0b0; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--brand-dark); color: var(--text-main); margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
+        header { text-align: center; padding: 20px 0; border-bottom: 2px solid var(--brand-yellow); }
+        .logo-box { width: 140px; margin: 0 auto; } .logo-box img { width: 100%; border-radius: 10px; }
+        
+        .tabs-container { position: sticky; top: 0; background: #000; display: flex; overflow-x: auto; gap: 8px; padding: 15px 10px; border-bottom: 1px solid #222; z-index: 100; scrollbar-width: none; }
+        .tab-link { flex: 0 0 auto; background: #1a1a1a; color: #fff; border: 1px solid #333; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-weight: bold; }
+        .tab-link.active { background: var(--brand-yellow); color: #000; border-color: var(--brand-yellow); }
+        
+        .tab-content { display: none; padding: 15px; max-width: 600px; margin: 0 auto; padding-bottom: 50px; }
+        .tab-content.active { display: block; }
+        
+        .item-card { background: var(--card-bg); margin-bottom: 12px; padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222; }
+        .item-info { display: flex; align-items: center; gap: 10px; }
+        .info-btn { background: #333; color: var(--brand-yellow); border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; border: 1px solid var(--brand-yellow); }
+        
+        .price-val { font-weight: 800; color: var(--brand-yellow); font-size: 1.1rem; }
+        .add-btn { background: var(--brand-yellow); color: #000; border: none; padding: 8px 15px; border-radius: 10px; cursor: pointer; font-weight: bold; }
+
+        /* التوقيع الأسفل */
+        .footer-dev { text-align: center; padding: 30px 10px 150px; color: #444; font-size: 0.8rem; border-top: 1px solid #111; margin-top: 20px; }
+        .footer-dev a { color: #666; text-decoration: none; font-weight: bold; }
+
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; }
+        .modal-content { background: #1a1a1a; width: 85%; max-width: 400px; padding: 20px; border-radius: 20px; border: 1px solid var(--brand-yellow); text-align: center; }
+        
+        .cart-wrapper { position: fixed; bottom: -100%; left: 0; right: 0; background: #111; border-top: 3px solid var(--brand-yellow); transition: 0.4s; z-index: 1000; border-radius: 25px 25px 0 0; }
+        .cart-wrapper.visible { bottom: -380px; } .cart-wrapper.open { bottom: 0 !important; }
+        .cart-handle { height: 70px; display: flex; justify-content: space-between; align-items: center; padding: 0 25px; cursor: pointer; background: var(--brand-yellow); color: #000; font-weight: bold; }
+        .cart-content { padding: 20px; height: 450px; overflow-y: auto; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #222; padding-bottom: 5px; }
+        .remove-btn { color: #fff; background: #ff4d4d; border: none; width: 25px; height: 25px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        
+        .notes-area { width: 100%; background: #222; border: 1px solid #333; border-radius: 10px; color: #fff; padding: 10px; margin: 15px 0; resize: none; font-family: inherit; box-sizing: border-box; outline: none; }
+        .delivery-options { display: flex; gap: 10px; margin-bottom: 15px; }
+        .delivery-options label { flex: 1; background: #222; text-align: center; padding: 15px; border-radius: 12px; cursor: pointer; border: 2px solid #333; transition: 0.3s; font-weight: bold; color: #fff; }
+        .delivery-options input { display: none; }
+        .delivery-options label:has(input:checked) { border-color: var(--brand-yellow); background: #1a1a1a; color: var(--brand-yellow); }
+
+        .delivery-note { background: #1a1505; color: var(--brand-yellow); padding: 12px; border-radius: 10px; border: 1px dashed var(--brand-yellow); margin-bottom: 15px; line-height: 1.5; display: none; }
+        .checkout-btn { background: #25d366; color: white; border: none; width: 100%; padding: 18px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+
+<header><div class="logo-box"><img src="https://i.ibb.co/wZ50t2Db/IMG-0664.jpg"></div></header>
+
+<div class="tabs-container">
+    <button class="tab-link active" onclick="openTab(event, 'shawarma')">🌯 شاورما</button>
+    <button class="tab-link" onclick="openTab(event, 'breakfast')">🍳 فطور</button>
+    <button class="tab-link" onclick="openTab(event, 'pizza')">🍕 بيتزا</button>
+    <button class="tab-link" onclick="openTab(event, 'burger')">🍔 برجر</button>
+    <button class="tab-link" onclick="openTab(event, 'sides')">🍟 إضافات</button>
+    <button class="tab-link" onclick="openTab(event, 'drinks')">🥤 مشروبات</button>
+</div>
+
+<div id="shawarma" class="tab-content active"><script>const sh = [["شاورما الطيبين", 4, 468], ["مال أول", 5, 450], ["صاروخ", 9, 400], ["صاروخ قرصان", 10, 647], ["عربي", 15, 249], ["عربي قرصان", 17, 800], ["سلطة شاورما", 10, 367], ["صحن شاورما سادة", 20, 250]]; sh.forEach(i => document.write(`<div class="item-card"><div class="item-info"><div class="info-btn" onclick="showCal('${i[2]}')">i</div><h4>${i[0]}</h4></div><div><span class="price-val">${i[1]} ريال</span> <button class="add-btn" onclick="addToCart('${i[0]}', ${i[1]})">+</button></div></div>`));</script></div>
+<div id="breakfast" class="tab-content"><script>const br = [["حمسة حلوم", 4, 323], ["حلوم صبح ولفة", 5, 337], ["مسقعة", 3, 323], ["شكشوكة يوناني", 3, 298], ["بيض سكرامبل", 5, 255], ["عجة بيض", 3, 298], ["حمسة دجاج سبايسي", 3, 310], ["حمسة دجاج بالكريمة", 4, 323], ["حمسة حمص", 6, 337], ["بوكس محفوفة", 35, 310], ["تونة", 4, 298]]; br.forEach(i => document.write(`<div class="item-card"><div class="item-info"><div class="info-btn" onclick="showCal('${i[2]}')">i</div><h4>${i[0]}</h4></div><div><span class="price-val">${i[1]} ريال</span> <button class="add-btn" onclick="addToCart('${i[0]}', ${i[1]})">+</button></div></div>`));</script></div>
+<div id="pizza" class="tab-content"><script>const pz = [["مارجريتا", 16, 250], ["بيتزا شاورما", 18, 900], ["بيتزا خضار", 16, 500]]; pz.forEach(i => document.write(`<div class="item-card"><div class="item-info"><div class="info-btn" onclick="showCal('${i[2]}')">i</div><h4>${i[0]}</h4></div><div><span class="price-val">${i[1]} ريال</span> <button class="add-btn" onclick="addToCart('${i[0]}', ${i[1]})">+</button></div></div>`));</script></div>
+<div id="burger" class="tab-content"><script>const bg = [["برجر", 15, 350], ["برجر مع وجبة", 20, 600]]; bg.forEach(i => document.write(`<div class="item-card"><div class="item-info"><div class="info-btn" onclick="showCal('${i[2]}')">i</div><h4>${i[0]}</h4></div><div><span class="price-val">${i[1]} ريال</span> <button class="add-btn" onclick="addToCart('${i[0]}', ${i[1]})">+</button></div></div>`));</script></div>
+<div id="sides" class="tab-content"><script>const sd = [["بطاطس", 4, 0], ["صوص سبايسي", 1, 0], ["صوص ثوم", 1, 0]]; sd.forEach(i => document.write(`<div class="item-card"><div class="item-info"><h4>${i[0]}</h4></div><div><span class="price-val">${i[1]} ريال</span> <button class="add-btn" onclick="addToCart('${i[0]}', ${i[1]})">+</button></div></div>`));</script></div>
+<div id="drinks" class="tab-content"><script>const dr = [["بيبسي", 3], ["عصير الربيع", 2], ["ماء", 1], ["شاي", 2], ["شاي بحليب", 3]]; dr.forEach(i => document.write(`<div class="item-card"><h4>${i[0]}</h4><div><span class="price-val">${i[1]} ريال</span> <button class="add-btn" onclick="addToCart('${i[0]}', ${i[1]})">+</button></div></div>`));</script></div>
+
+<footer class="footer-dev">
+    تصميم مواقع: <a href="tel:0538396877">0538396877</a>
+</footer>
+
+<div id="calModal" class="modal" onclick="this.style.display='none'">
+    <div class="modal-content"><h3>السعرات الحرارية</h3><p id="calText" style="font-size:1.5rem; font-weight:bold;"></p><p>سعرة حرارية</p><button class="add-btn" style="width:100%">إغلاق</button></div>
+</div>
+
+<div id="cartWrapper" class="cart-wrapper">
+    <div class="cart-handle" onclick="toggleCart()">
+        <span>🛒 طلبياتك (<span id="count">0</span>)</span>
+        <span id="totalLabel">0 ريال</span>
+    </div>
+    <div class="cart-content">
+        <div id="orderList"></div>
+        <textarea id="userNotes" class="notes-area" rows="2" placeholder="ملاحظات إضافية (اختياري)..."></textarea>
+        <div class="delivery-options">
+            <label><input type="radio" name="del" value="0" checked onchange="calculate()"><span>📍 استلام</span></label>
+            <label><input type="radio" name="del" value="delivery" onchange="calculate()"><span>🚗 توصيل</span></label>
+        </div>
+        <div id="deliveryNote" class="delivery-note">💡 <b>ملاحظة:</b> فضلاً أرسل موقعك عبر الواتساب عند إتمام الطلب، وسيتم تزويدك بقيمة التوصيل بناءً على المسافة.</div>
+        <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:1.4rem; color:var(--brand-yellow); margin:10px 0;">
+            <span>الإجمالي:</span><span id="finalPrice">0 ريال</span>
+        </div>
+        <button class="checkout-btn" onclick="sendWhatsApp()">إرسال واتساب ✅</button>
+    </div>
+</div>
+
+<script>
+    let cart = [];
+    function openTab(e, n) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('active'));
+        document.getElementById(n).classList.add('active'); e.currentTarget.classList.add('active');
+    }
+    function showCal(val) { document.getElementById('calText').innerText = val; document.getElementById('calModal').style.display = 'flex'; }
+    function addToCart(n, p) { cart.push({ id: Date.now() + Math.random(), n, p }); document.getElementById('cartWrapper').classList.add('visible'); calculate(); }
+    function removeItem(id) { cart = cart.filter(i => i.id !== id); if (cart.length === 0) document.getElementById('cartWrapper').classList.remove('visible', 'open'); calculate(); }
+    function calculate() {
+        const list = document.getElementById('orderList');
+        const note = document.getElementById('deliveryNote');
+        list.innerHTML = ""; let total = 0;
+        cart.forEach(i => { total += i.p; list.innerHTML += `<div class="cart-item"><span>${i.n}</span><div><span>${i.p} ريال</span> <button class="remove-btn" onclick="removeItem(${i.id})">x</button></div></div>`; });
+        const d = document.querySelector('input[name="del"]:checked').value;
+        note.style.display = (d === 'delivery') ? 'block' : 'none';
+        document.getElementById('finalPrice').innerText = total + (d === 'delivery' ? " + التوصيل" : " ريال");
+        document.getElementById('count').innerText = cart.length;
+        document.getElementById('totalLabel').innerText = total + " ريال";
+    }
+    function toggleCart() { document.getElementById('cartWrapper').classList.toggle('open'); }
+    function sendWhatsApp() {
+        const phone = "966502924846"; 
+        const notes = document.getElementById('userNotes').value;
+        const delType = document.querySelector('input[name="del"]:checked').parentElement.innerText.trim();
+        let m = "*طلب جديد - صبح ولفة*\n\n";
+        cart.forEach(i => m += `• ${i.n} (${i.p} ريال)\n`);
+        m += `\n📍 *طريقة الاستلام:* ${delType}`;
+        if(notes) m += `\n📝 *الملاحظات:* ${notes}`;
+        m += `\n💰 *الإجمالي:* ${document.getElementById('finalPrice').innerText}`;
+        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(m)}`);
+    }
+</script>
+</body>
+</html>
